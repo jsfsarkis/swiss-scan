@@ -8,6 +8,7 @@ import 'package:swiss_scan/cubits/validate_code_cubit/validate_code_cubit.dart';
 import 'package:swiss_scan/ui/widgets/screen_header.dart';
 
 import '../theme/app_colors.dart';
+import '../widgets/custom_alert_dialog.dart';
 
 class ScanQrScreen extends StatefulWidget {
   const ScanQrScreen({Key? key}) : super(key: key);
@@ -39,7 +40,18 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
         body: BlocListener<ValidateCodeCubit, ValidateCodeState>(
           listener: (context, state) {
             if (state is ValidateCodeURL) {
-              context.read<UrlLauncherCubit>().launchURL(state.barcode.code!);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return CustomAlertDialog(
+                    title: state.barcode.code.toString(),
+                    content: 'Do you want to visit this link?',
+                    onOkTap: () {
+                      context.read<UrlLauncherCubit>().launchURL(state.barcode.code!);
+                    },
+                  );
+                },
+              );
             }
           },
           child: Stack(
